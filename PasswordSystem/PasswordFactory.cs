@@ -8,6 +8,12 @@ namespace PasswordSystem
 {
     public static class PasswordFactory
     {
+        /**
+         * <summary>
+         * Main Password function.
+         * It will get the keyword and convert it to the Password with 2 digit number for day
+         * </summary>
+         */ 
         public static string convertToPassword(string keyWord)
         {
             string password = keyWord.Replace('a', '@').Replace('b', '8').Replace('i', '!').Replace('s', '$').Replace('o', '0').Replace('t', '+');

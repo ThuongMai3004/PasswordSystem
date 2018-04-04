@@ -4,6 +4,12 @@ using System.Windows.Forms;
 
 namespace PasswordSystem
 {
+    /**
+     * <summary>
+     * Practice form is used for user to practice the password
+     * Help user to familiarize the password
+     * </summary>
+     */
     public partial class PracticeForm : Form
     {
         public PracticeForm()
@@ -12,11 +18,13 @@ namespace PasswordSystem
             RefreshForm();
         }
 
+        //Will be called by Refresh Password button in GenerateForm
         public void RefreshForm ()
         {
             this.userLb.Text = "User: " + Model.UserName;
         }
 
+        //Check button handler, will compare the input password with the password provided in GenerateForm
         private void checkBtn_Click(object sender, EventArgs e)
         {
             if (String.IsNullOrWhiteSpace(this.practiceBox.Text))
@@ -35,6 +43,7 @@ namespace PasswordSystem
             }
         }
 
+        //Logging with date and time if user closes this form
         private void PracticeForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (e.CloseReason == CloseReason.UserClosing)

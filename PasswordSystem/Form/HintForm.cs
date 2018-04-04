@@ -11,6 +11,12 @@ using System.Windows.Forms;
 
 namespace PasswordSystem
 {
+    /**
+     *<summary>
+     * Hint Form is used to display the keyword for the password
+     * Help user to memorize the password easier
+     * </summary>
+     */
     public partial class HintForm : Form
     {
         public HintForm()
@@ -19,6 +25,7 @@ namespace PasswordSystem
             RefreshHintForm();
         }
 
+        //This function will be called everytime by Refresh Password button in GenerateForm
         public void RefreshHintForm()
         {
             try
@@ -34,6 +41,7 @@ namespace PasswordSystem
             }
         }
 
+        //Logging the username with date and time when s/he closes the form
         private void HintForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (e.CloseReason == CloseReason.UserClosing)

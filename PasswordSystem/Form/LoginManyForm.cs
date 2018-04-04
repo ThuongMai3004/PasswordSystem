@@ -1,29 +1,31 @@
 ﻿using PasswordSystem.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace PasswordSystem
 {
+    /**
+     * <summary>
+     * LoginMany form is used for Part 3 
+     * It will display 3 parts Email, Banking and Shopping
+     * Each part will pass appropriate value to the login form using 2nd constructor
+     * </summary>
+     */
+
     public partial class LoginManyForm : Form
     {
         public int shopAttempt = 3, bankAttempt = 3, emailAttempt = 3;
         
         public LoginManyForm()
         {
-            //Logger.Log("-----Initialize LOGIN MANY PASSWORD FORM------", isInit: true);
             InitializeComponent();
             ReadWriteFiles.ReadAccountFile(Model.emailAccountFile);
             UpdateUserName("svp" + --Model.Count);
             RandomizeGroupBox();
         }
 
+        //Simple function to shuffle 3 parts Email, Shopping and Banking each time user opens the form
         private void RandomizeGroupBox()
         {
             Point temp1 = this.BankGroupBox.Location;
@@ -49,18 +51,21 @@ namespace PasswordSystem
             }
         }
 
+        //Login button handler for Shopping
         private void loginShopBtn_Click(object sender, EventArgs e)
         {
             LoginForm loginForm = new LoginForm(this, Model.UserName, "Shopping", Model.shoppingAccountFile, shopAttempt);
             loginForm.Show();
         }
 
+        //Login button handler for Banking
         private void loginBankBtn_Click(object sender, EventArgs e)
         {
             LoginForm loginForm = new LoginForm(this, Model.UserName, "Banking", Model.bankAccountFile, bankAttempt);
             loginForm.Show();
         }
 
+        //Login button handler for Email
         private void loginEmailBtn_Click(object sender, EventArgs e)
         {
             LoginForm loginForm = new LoginForm(this, Model.UserName, "Email", Model.emailAccountFile, emailAttempt);
@@ -80,6 +85,10 @@ namespace PasswordSystem
         public Button GetBankBtn { get { return this.loginBankBtn; } }
         public Button GetShopBtn { get { return this.loginShopBtn; } }
 
+        /*
+         * Will be called if user closes this form
+         * it will check if user has tried to login all the parts and give warning
+         */ 
         private void LoginManyForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (e.CloseReason == CloseReason.UserClosing)

@@ -9,6 +9,13 @@ using System.Diagnostics;
 
 namespace PasswordSystem
 {
+    /**
+     * <summary>
+     * This class is responsible to create new password for the user
+     * it can be used by two parts of the requirements
+     * Only different is part 2 will use the 1st constructor and part 3 will use the 2nd one
+     * </summary>
+     */
     public partial class GenerateForm : Form
     {
         ToolTip tooltip = new ToolTip();
@@ -21,32 +28,37 @@ namespace PasswordSystem
         string whatPurpose = "Creating Password";
         bool lockButton = false;
 
+        //Default constructor for part 2
         public GenerateForm()
         {
-            //Logger.Log("--- INITIALIZATION GENERATING PASSWORD FORM-----", isInit: true);
             InitializeComponent();
             InitializeToolTip();
+
+            //Read from the account file and save all available accounts to Data/Model
             ReadWriteFiles.ReadAccountFile(pathFileToSave);
+
             UpdateUserName("svp" + Model.Count);
             UpdatePassword(String.Empty);
-            //Logger.Log(this.userLb.Text, "Start creating password for this user");
         }
 
+        //Default constructor for part 3
         public GenerateForm(string username, string _whatPurpose, string saveToThisFile, GenerateManyForm _form = null)
         {
-            //Logger.Log("--- INITIALIZATION GENERATING PASSWORD FORM for " + whatPurpose + "-----", isInit: true);
             InitializeComponent();
             InitializeToolTip();
+
             UpdateUserName(username);
             UpdatePassword(String.Empty);
+
             this.pathFileToSave = saveToThisFile;
             this.whatPurpose = _whatPurpose;
             this.titleLb.Text = "Team 48 Password Scheme for " + _whatPurpose;
             this.generateManyForm = _form;
-            //Logger.Log(this.userLb.Text, "Start creating password for this user");
+
             Logger.Log(whatPurpose, 2);
         }
 
+        //ToolTip is used when user hover the mouse over the button to display helpful hint
         private void InitializeToolTip()
         {
             tooltip.ToolTipTitle = "Helpful: ";
@@ -58,13 +70,17 @@ namespace PasswordSystem
         }
 
         /** -----------LISTENER BUTTON---------------- */
-
+        /*
+         * Refresh Password button handler
+         * It used to generate new password everytime user click the button
+         * It also refreshes the Hint and Practice form to the latest password
+         */
         private void refreshBtn_Click(object sender, EventArgs e)
         {
+            //If the userLb is empty, it means that this is the new user, so assign new username to this user
             if (String.IsNullOrEmpty(this.userLb.Text))
             {
                 Model.Count++;
-                //this.userLb.Text = "svp" + Model.Count;
                 UpdateUserName("svp" + Model.Count);
                 Logger.Log(this.userLb.Text, "Start creating password for this user [" + Model.UserName + "]");
             }
@@ -77,54 +93,48 @@ namespace PasswordSystem
             
             Logger.Log("User [" + this.userLb.Text + "] refreshed the password - Current key is [" + Model.KeyWord + "] and Password is [" + Model.Password + "]");
 
+            //Refresh Hint and Practice forms to the latest password
             if (hintForm != null)
                 hintForm.RefreshHintForm();
             if (practiceForm != null)
                 practiceForm.RefreshForm();
         }
 
+        /*
+         * Practice button handler
+         * It is used to call the practice form to practice the password as many time as they want
+         * It will be refreshed by the Refresh button, so the password is always up to date. No need to close the form to refresh
+         */
         private void practiceBtn_Click(object sender, EventArgs e)
         {
             if (!String.IsNullOrWhiteSpace(this.passwordTxtBox.Text))
             {
                 Logger.Log("User [" + this.userLb.Text + "] used practice form for password [" + Model.Password + "] and keyword [" + Model.KeyWord + "]");
-                if (practiceForm == null || practiceForm.Text == "")
-                {
-                    practiceForm = new PracticeForm();
-                    practiceForm.Dock = DockStyle.Fill;
-                    practiceForm.Show();
-                }
-                else if (Model.CheckFormOpen(practiceForm))
-                {
-                    practiceForm.WindowState = FormWindowState.Normal;
-                    practiceForm.Dock = DockStyle.Fill;
-                    practiceForm.Show();
-                    practiceForm.Focus();
-                }
+                //Use DisplayForm function to open only 1 form
+                ReadWriteFiles.DisplayForm(ref practiceForm);
             }
         }
 
+        /*
+         * Hint button handler
+         * It will call the Hint form with the keyword for user to memorize the password
+         */ 
         private void hintBtn_Click(object sender, EventArgs e)
         {
             if (!String.IsNullOrWhiteSpace(this.passwordTxtBox.Text))
             {
                 Logger.Log("User [" + this.userLb.Text + "] used hint button");
-                if (hintForm == null || hintForm.Text == "")
-                {
-                    hintForm = new HintForm();
-                    hintForm.Dock = DockStyle.Fill;
-                    hintForm.Show();
-                }
-                else if (Model.CheckFormOpen(hintForm))
-                {
-                    hintForm.WindowState = FormWindowState.Normal;
-                    hintForm.Dock = DockStyle.Fill;
-                    hintForm.Show();
-                    hintForm.Focus();
-                }
+                //Use DisplayForm function to open only 1 form
+                ReadWriteFiles.DisplayForm(ref hintForm);
             }
         }
 
+        /*
+         * Accept Password button handler
+         * Will add the password to this user to the database
+         * Remove the word keyword out of the list of words
+         * Clean up the GUI, then close it
+         */ 
         private void acceptBtn_Click(object sender, EventArgs e)
         {
             if (!String.IsNullOrWhiteSpace(this.passwordTxtBox.Text))
@@ -142,6 +152,10 @@ namespace PasswordSystem
         }
 
         /**----------------MENU STRIP LISTENER---------------*/
+        /*
+         * Reset toolStripMenuItem handler
+         * It will reset the Logging file and more
+         */ 
         private void resetToolStripMenuItem_Click(object sender, EventArgs e)
         {
             DialogResult clickBtn = MessageBox.Show("This will reset everything including:\n - Clean accounts file\n - " +
@@ -157,17 +171,20 @@ namespace PasswordSystem
             }
         }
 
+        //Display the Log File using notepad
         private void displayLogToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Logger.DisplayLogFile();
         }
 
+        //Display account file using notepad
         private void displayAccountsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ReadWriteFiles.DisplayFile(pathFileToSave);
         }
 
         /**------------------HELPER FUNCTION-------------------*/
+        //Handler adding new account to the database
         private void addNewAccount()
         {
             foreach (string key in accounts.Keys)
@@ -178,15 +195,16 @@ namespace PasswordSystem
                     return;
                 }
             }
-
+            //Add the username with this password to the Dictionary accounts
             accounts.Add(this.userLb.Text, this.passwordTxtBox.Text);
-
-            //string path = Directory.GetCurrentDirectory() + @"\Data\accountsList.txt";
+            
+            //Write the password with this username to the data file
             string msg = Model.UserName + "," + Model.Password + "," + Model.KeyWord;
             ReadWriteFiles.WriteToFile(pathFileToSave, msg);
-            //Logger.Log("Added password [" + Model.Password + "] and keyword [" + Model.KeyWord + "] to this account [" + Model.UserName + "] to the file at [" + this.pathFileToSave + "]");
+            
             Logger.Log("User [" + Model.UserName + "] - password [" + Model.Password + "] - keyword [" + Model.KeyWord + "] has been added to the file at [" + this.pathFileToSave + "]");
             Logger.Log("Completed [" + whatPurpose + "] form");
+
             this.lockButton = true;
         }
 
@@ -224,6 +242,11 @@ namespace PasswordSystem
             Model.KeyWord = newKey;
         }
 
+        /*
+         * Will be call if the user close this form
+         * It only activated by Part 3 if generateManyForm is not null
+         * It will pass info to the parent generateManyForm and close this form
+         */ 
         private void GenerateForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (e.CloseReason == CloseReason.UserClosing)

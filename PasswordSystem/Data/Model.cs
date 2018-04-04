@@ -7,6 +7,11 @@ using System.Windows.Forms;
 
 namespace PasswordSystem.Data
 {
+    /**
+     * <summary>
+     * Save all the data of the program to this class
+     * </summary>
+     */
     public static class Model
     {
         public const string accountFileName = @"\Data\accountsList.txt";
@@ -68,6 +73,10 @@ namespace PasswordSystem.Data
             return "null";
         }
 
+        /* It is used to make sure that no 2 same forms appear on the screen
+         * All the form that is appeared on the screen will be saved in Application.OpenForms
+         * So, get the collection of the form, then check if the form is already opened
+         */ 
         public static bool CheckFormOpen(Form myForm)
         {
             FormCollection collection = Application.OpenForms;

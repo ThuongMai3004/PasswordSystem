@@ -9,8 +9,14 @@ using System.Threading.Tasks;
 
 namespace PasswordSystem
 {
+    /**
+     * <summary>
+     * Responsible for logging file with date and time
+     * </summary>
+     */
     public static class Logger
     {
+        //Main log function with 5 levels
         public static void Log(string msg, int isNewLine = 0)
         {
             string logTime = null;
@@ -47,6 +53,7 @@ namespace PasswordSystem
             ReadWriteFiles.WriteToFile(Model.logFileName, logTime);
         }
 
+        //Alternative log to emphasize the username
         public static void Log(string user, string msg)
         {
             string thisDay = DateTime.Now.ToString("yyyy-MMM-dd HH:mm:ss");
@@ -56,28 +63,13 @@ namespace PasswordSystem
             ReadWriteFiles.WriteToFile(Model.logFileName, logTime);
         }
 
-        /*private static void WriteToFile(string msg)
-        {
-            if (!File.Exists(logFileName))
-            {
-                using (StreamWriter sw = File.CreateText(logFileName))
-                {
-                    sw.WriteLine(msg);
-                }
-            }
-            else
-            {
-                using (StreamWriter file = new StreamWriter(logFileName, true))
-                {
-                    file.WriteLine(msg);
-                }
-            }
-        }*/
-
+        //Get the log file location and open it using Notepad
         public static void DisplayLogFile()
         {
             ReadWriteFiles.DisplayFile(Model.logFileName);
         }
+
+        //Wipe out the whole log file or simply add multiple seperate lines
         public static void CleanLogFile(bool isClean = false)
         {
             if (!isClean)
